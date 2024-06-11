@@ -2,6 +2,10 @@
 
 import { Auth } from 'aws-amplify';
 import { useState } from 'react';
+import { Amplify } from 'aws-amplify';
+import awsconfig from '../../aws-exports';
+
+Amplify.configure(awsconfig);
 
 export default function SignIn() {
   const [username, setUsername] = useState('');

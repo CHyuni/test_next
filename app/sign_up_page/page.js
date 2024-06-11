@@ -14,11 +14,6 @@ export default function SignUp() {
       const { isSignUpComplete, userId, nextStep } = await signUp({
         username,
         password,
-        options: {
-          userAttributes: {
-            email, // 추가 속성으로 이메일 전달
-          },
-        }
       });
       console.log('회원가입 성공:', isSignUpComplete, userId, nextStep);
       // 회원가입 성공 시 처리

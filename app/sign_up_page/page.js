@@ -39,12 +39,12 @@ export default function SignUp() {
         value={password} 
         onChange={(e) => setPassword(e.target.value)} 
       />
-      <input 
+      {/* <input 
         type="email" 
         placeholder="이메일" 
         value={email} 
         onChange={(e) => setEmail(e.target.value)} 
-      />
+      /> */}
       <button onClick={handleSignUp}>회원가입</button>
     </div>
   );

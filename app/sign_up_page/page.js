@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { Auth } from 'aws-amplify';
 import { useState } from 'react';
+import { signUp } from 'aws-amplify/auth';
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
@@ -9,16 +9,18 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
 
-  const signUp = async () => {
+  const handleSignUp = async () => {
     try {
-      const { user } = await Auth.signUp({
+      const { isSignUpComplete, userId, nextStep } = await signUp({
         username,
         password,
-        attributes: {
-          email, // 이메일 등 추가 속성도 전달 가능
-        },
+        options: {
+          userAttributes: {
+            email, // 추가 속성으로 이메일 전달
+          },
+        }
       });
-      console.log('회원가입 성공:', user);
+      console.log('회원가입 성공:', isSignUpComplete, userId, nextStep);
       // 회원가입 성공 시 처리
     } catch (error) {
       console.log('회원가입 실패:', error);
@@ -48,7 +50,7 @@ export default function SignUp() {
         value={email} 
         onChange={(e) => setEmail(e.target.value)} 
       />
-      <button onClick={signUp}>회원가입</button>
+      <button onClick={handleSignUp}>회원가입</button>
     </div>
   );
 }

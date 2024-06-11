@@ -3,11 +3,11 @@ import Image from "next/image";
 export default function envtest() {
   return (
     <div>
-      <p>region: {process.env.DEFAULT_REGION}</p>
-      <p>bucket: {process.env.S3_BUCKET_NAME}</p>
-      <p>user_pool: {process.env.USER_POOL_ID}</p>
-      <p>identity_pool: {process.env.IDENTITY_POOL_ID}</p>
-      <p>user_pool_client_id: {process.env.APP_CLIENT_ID}</p>
+      <p>region: {process.env.NEXT_PUBLIC_AWS_PROJECT_REGION}</p>
+      <p>bucket: {process.env.NEXT_PUBLIC_AWS_USER_FILES_S3_BUCKET}</p>
+      <p>user_pool: {process.env.NEXT_PUBLIC_AWS_USER_POOLS_ID}</p>
+      <p>identity_pool: {process.env.NEXT_PUBLIC_AWS_COGNITO_IDENTITY_POOL_ID}</p>
+      <p>user_pool_client_id: {process.env.NEXT_PUBLIC_AWS_USER_POOLS_WEB_CLIENT_ID}</p>
     </div>
   );
 }

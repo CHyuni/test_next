@@ -7,19 +7,11 @@ export default function Home() {
   const [result, setResult] = useState(null);
 
   const handleButtonClick = async () => {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/test`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(data); // 디버깅을 위한 콘솔 출력
-        setResult(data.body);
-    } catch (error) {
-        console.error('Error:', error);
-        setError(error.message);
-    }
-};
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}test`);
+      const data = await response.json();
+      console.log(data);
+      setResult(data.body);
+  };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
@@ -35,7 +27,6 @@ export default function Home() {
       <br></br>
       <button onClick={handleButtonClick}>Call Lambda</button>
       {result && <p>Result: {result}</p>}
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
     </div>
   );
 }

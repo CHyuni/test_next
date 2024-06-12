@@ -1,6 +1,17 @@
+'use client'
+
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
+  const [result, setResult] = useState(null);
+
+  const handleButtonClick = async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/test`);
+      const data = await response.json();
+      setResult(data.body);
+  };
+
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>홈페이지</h1>
@@ -12,6 +23,9 @@ export default function Home() {
           회원가입
         </Link>
       </div>
+      <br></br>
+      <button onClick={handleButtonClick}>Call Lambda</button>
+      {result && <p>Result: {result}</p>}
     </div>
   );
 }

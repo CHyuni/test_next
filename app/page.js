@@ -35,6 +35,7 @@ export default function Home() {
       <br></br>
       <button onClick={handleButtonClick}>Call Lambda</button>
       {result && <p>Result: {result}</p>}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
     </div>
   );
 }

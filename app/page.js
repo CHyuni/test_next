@@ -7,10 +7,19 @@ export default function Home() {
   const [result, setResult] = useState(null);
 
   const handleButtonClick = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}test`);
-      const data = await response.json();
-      setResult(data.body);
-  };
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/test`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data); // 디버깅을 위한 콘솔 출력
+        setResult(data.body);
+    } catch (error) {
+        console.error('Error:', error);
+        setError(error.message);
+    }
+};
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Amplify, Auth } from 'aws-amplify';
+import { signUp, confirmSignUp } from 'aws-amplify/auth';
+import { useRouter } from 'next/navigation'; // next/navigation 사용
+import { Amplify } from 'aws-amplify';
 import awsconfig from '../../aws-exports';
-import { useRouter } from 'next/router'; // next/router import
 
 Amplify.configure(awsconfig);
 
@@ -18,14 +19,16 @@ export default function SignUp() {
 
   const handleSignUp = async () => {
     try {
-      const { user } = await Auth.signUp({
+      const { isSignUpComplete, userId, nextStep } = await signUp({
         username,
         password,
-        attributes: {
-          email,
+        options: {
+          userAttributes: {
+            email,
+          },
         },
       });
-      console.log('회원가입 성공:', user);
+      console.log('회원가입 성공:', isSignUpComplete, userId, nextStep);
       setIsSignUpComplete(true);
     } catch (error) {
       console.log('회원가입 실패:', error);
@@ -33,14 +36,13 @@ export default function SignUp() {
     }
   };
 
-  const handleConfirmation = async () => {
+  const handleConfirmSignUp = async () => {
     try {
-      await Auth.confirmSignUp(username, confirmationCode);
-      console.log('확인 성공');
-      // 확인 성공 시 로그인 페이지로 이동
-      router.push('../sign_in_page');
+      await confirmSignUp(username, confirmationCode);
+      console.log('인증 성공');
+      router.push('../sign_in_page'); // 인증 성공 후 로그인 페이지로 이동
     } catch (error) {
-      console.log('확인 실패:', error);
+      console.log('인증 실패:', error);
       setError(error.message);
     }
   };
@@ -79,7 +81,7 @@ export default function SignUp() {
             value={confirmationCode} 
             onChange={(e) => setConfirmationCode(e.target.value)} 
           />
-          <button onClick={handleConfirmation}>확인</button>
+          <button onClick={handleConfirmSignUp}>확인</button>
         </>
       )}
     </div>

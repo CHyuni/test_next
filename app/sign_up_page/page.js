@@ -40,6 +40,8 @@ export default function SignUp() {
 
   const handleConfirmSignUp = async () => {
     try {
+      console.log('Stored username:', storedUsername); // Debugging line
+      console.log('Confirmation code:', confirmationCode); // Debugging line
       await confirmSignUp(storedUsername, confirmationCode); // Use stored username
       console.log('인증 성공');
       router.push('/signin');

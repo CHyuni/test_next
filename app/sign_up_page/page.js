@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { signUp, confirmSignUp } from 'aws-amplify/auth';
-import { useRouter } from 'next/navigation'; // next/navigation 사용
+import { useRouter } from 'next/navigation';
 import { Amplify } from 'aws-amplify';
 import awsconfig from '../../aws-exports';
 
@@ -15,7 +15,8 @@ export default function SignUp() {
   const [confirmationCode, setConfirmationCode] = useState('');
   const [error, setError] = useState(null);
   const [isSignUpComplete, setIsSignUpComplete] = useState(false);
-  const router = useRouter(); // useRouter 훅 사용
+  const [storedUsername, setStoredUsername] = useState(''); // Add state to store username
+  const router = useRouter();
 
   const handleSignUp = async () => {
     try {
@@ -29,6 +30,7 @@ export default function SignUp() {
         },
       });
       console.log('회원가입 성공:', isSignUpComplete, userId, nextStep);
+      setStoredUsername(username); // Store the username
       setIsSignUpComplete(true);
     } catch (error) {
       console.log('회원가입 실패:', error);
@@ -38,9 +40,9 @@ export default function SignUp() {
 
   const handleConfirmSignUp = async () => {
     try {
-      await confirmSignUp(username, confirmationCode);
+      await confirmSignUp(storedUsername, confirmationCode); // Use stored username
       console.log('인증 성공');
-      router.push('../sign_in_page'); // 인증 성공 후 로그인 페이지로 이동
+      router.push('/signin');
     } catch (error) {
       console.log('인증 실패:', error);
       setError(error.message);

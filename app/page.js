@@ -7,7 +7,7 @@ export default function Home() {
   const [result, setResult] = useState(null);
 
   const handleButtonClick = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}test`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/captcha`);
       const data = await response.json();
       console.log(data);
       setResult(data.body);

@@ -7,11 +7,25 @@ export default function Home() {
   const [result, setResult] = useState(null);
 
   const handleButtonClick = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/captcha`);
-      const data = await response.json();
-      console.log(data);
-      setResult(data.body);
-  };
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}captcha`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'initialize' }),
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data);
+        setResult(JSON.stringify(data));
+    } catch (error) {
+        console.error('Error:', error);
+        setResult('Error occurred');
+    }
+};
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>

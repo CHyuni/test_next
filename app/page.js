@@ -1,34 +1,31 @@
 'use client'
 
-import { useState, useRef } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
-  const [audioSrc, setAudioSrc] = useState(null);
-  const [answer, setAnswer] = useState(null);
-  const audioRef = useRef(null);
+  const [result, setResult] = useState(null);
 
   const handleButtonClick = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}captcha`, {
-        method: 'GET'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setAudioSrc(data.audioUrl);
-        setAnswer(data.answer);
-        if (audioRef.current) {
-          audioRef.current.load();
-          audioRef.current.play();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}captcha`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'initialize' }),
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-      } else {
-        console.error('Failed to fetch audio');
-      }
+        const data = await response.json();
+        console.log(data);
+        setResult(JSON.stringify(data));
     } catch (error) {
-      console.error('Error:', error);
+        console.error('Error:', error);
+        setResult('Error occurred');
     }
-  };
+};
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
@@ -41,15 +38,9 @@ export default function Home() {
           회원가입
         </Link>
       </div>
-      <br />
-      <button onClick={handleButtonClick}>Play Audio Captcha</button>
-      {audioSrc && (
-        <audio ref={audioRef} controls>
-          <source src={audioSrc} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      )}
-      {answer && <p>Answer (for testing): {answer}</p>}
+      <br></br>
+      <button onClick={handleButtonClick}>Call Lambda</button>
+      {result && <p>Result: {result}</p>}
     </div>
   );
 }

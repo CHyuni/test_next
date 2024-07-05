@@ -1,31 +1,53 @@
 'use client'
 
+import { useState, useRef } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function Home() {
-  const [result, setResult] = useState(null);
+  const [audioSrc, setAudioSrc] = useState(null);
+  const [answer, setAnswer] = useState(null);
+  const [userInput, setUserInput] = useState('');
+  const [message, setMessage] = useState('');
+  const [fileName, setFileName] = useState('');
+  const audioRef = useRef(null);
 
   const handleButtonClick = async () => {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}captcha`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'initialize' }),
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}captcha`, {
+        method: 'GET'
+      });
+      
+      if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        setResult(JSON.stringify(data));
+        console.log("Received data:", data);  // 디버깅용
+        setAudioSrc(data.audioUrl);
+        setAnswer(data.answer);
+        setFileName(data.fileName);
+        setMessage('');
+        setUserInput('');
+        if (audioRef.current) {
+          audioRef.current.load();
+          audioRef.current.play().catch(e => console.error("Error playing audio:", e));
+        }
+      } else {
+        const errorText = await response.text();
+        console.error('Failed to fetch audio:', response.status, errorText);
+        setMessage('오디오를 가져오는데 실패했습니다. 다시 시도해주세요.');
+      }
     } catch (error) {
-        console.error('Error:', error);
-        setResult('Error occurred');
+      console.error('Error:', error);
+      setMessage('오류가 발생했습니다. 다시 시도해주세요.');
     }
-};
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (userInput === answer) {
+      setMessage('정답입니다!');
+    } else {
+      setMessage('틀렸습니다. 다시 시도해주세요.');
+    }
+  };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
@@ -38,9 +60,28 @@ export default function Home() {
           회원가입
         </Link>
       </div>
-      <br></br>
-      <button onClick={handleButtonClick}>Call Lambda</button>
-      {result && <p>Result: {result}</p>}
+      <br />
+      <button onClick={handleButtonClick}>Play Audio Captcha</button>
+      {audioSrc && (
+        <div>
+          <audio ref={audioRef} controls>
+            <source src={audioSrc} type="audio/wav" />
+            Your browser does not support the audio element.
+          </audio>
+          <p>File Name: {fileName}</p>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="Enter your answer"
+            />
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      )}
+      {message && <p>{message}</p>}
+      {answer && <p>Answer (for testing): {answer}</p>}
     </div>
   );
 }
